@@ -77,7 +77,7 @@
 
 ### 10. 数据库
 + mysql  
-+ redis  
++ [redis](doc/db/redis.md)  
 + mongo
 + PostgreSQL  
 + TiDB  

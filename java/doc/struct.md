@@ -11,3 +11,5 @@
 > 1. HashTable  
 > 1. ArrayDeque  
 > 1. PriorityQueue  
+
+### 1. ArrayList
