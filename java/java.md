@@ -15,10 +15,10 @@
 
 ## 正文
 ### 1. java api
-+ [常用数据结构](doc/STRUCT.md)  
-+ [jdk中的锁](doc/LOCK.md)   
-+ [ThreadLocal](doc/THREADLOCAL.md)    
-+ [线程与线程池](doc/THREAD.md)  
++ [常用数据结构](doc/struct.md)  
++ [jdk中的锁](doc/lock.md)   
++ [ThreadLocal](doc/threadLocal.md)    
++ [线程与线程池](doc/thread.md)  
 
 ### 2. jdk与虚拟机
 + 虚拟机中的锁  
