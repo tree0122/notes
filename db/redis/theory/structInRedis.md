@@ -42,8 +42,8 @@
     
 对象的类型：  
 
-   类型常量	    | 对象的名称 
-  --------      | -------- 
+类型常量         |   对象的名称 
+---             |   --- 
 REDIS_STRING    |	字符串对象
 REDIS_LIST	    |   列表对象
 REDIS_HASH	    |   哈希对象
@@ -53,7 +53,7 @@ REDIS_ZSET	    |   有序集合对象
 表: 对象的编码  
 
 编码常量	                    |   编码所对应的底层数据结构
-------                      |   -----
+---                         |   ---
 REDIS_ENCODING_INT          |	long 类型的整数
 REDIS_ENCODING_EMBSTR       |	embstr 编码的简单动态字符串
 REDIS_ENCODING_RAW          |	简单动态字符串
