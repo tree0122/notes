@@ -158,6 +158,50 @@
 图: ![dict](./../../../resources/png/dict.png)     
 
 ### 4. 跳跃表
+跳跃表节点：
+
+    typedef struct zskiplistNode {
+    
+        // 后退指针
+        struct zskiplistNode *backward;
+    
+        // 分值
+        double score;
+    
+        // 成员对象
+        robj *obj;
+    
+        // 层
+        struct zskiplistLevel {
+    
+            // 前进指针
+            struct zskiplistNode *forward;
+    
+            // 跨度
+            unsigned int span;
+    
+        } level[];
+    
+    } zskiplistNode;
+
+图: ![dict](./../../../resources/png/skipListNode.png)   
+    
+跳跃表：
+
+    typedef struct zskiplist {
+    
+        // 表头节点和表尾节点
+        struct zskiplistNode *header, *tail;
+    
+        // 表中节点的数量
+        unsigned long length;
+    
+        // 表中层数最大的节点的层数
+        int level;
+    
+    } zskiplist;
+
+图: ![dict](./../../../resources/png/skipList.png)  
 
 ### 5. 整数集合
 
