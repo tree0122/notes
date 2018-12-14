@@ -24,8 +24,6 @@
     };
 
 ### 2. 链表
-+ 节点：
-
 
     typedef struct listNode {
     
@@ -42,9 +40,7 @@
     
     
 
-图 ![node](./../../../resources/png/listNode.png)  
-
-+ 表：
+节点图: ![node](./../../../resources/png/listNode.png)  
 
 
     typedef struct list {
@@ -70,7 +66,7 @@
     } list;
     
 
-图 ![list](./../../../resources/png/list.png)
+图表: ![list](./../../../resources/png/list.png)
 
 
 ### 3. 字典
