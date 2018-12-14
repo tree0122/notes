@@ -39,6 +39,8 @@
         void *ptr;
         
     } robj;  
+
+***
     
 对象的类型：  
 
@@ -56,6 +58,8 @@ REDIS_ZSET	    |   有序集合对象
     OK
     redis> TYPE msg
     string
+
+***
 
 表: 对象的编码  
 
@@ -94,4 +98,5 @@ REDIS_ZSET      |	REDIS_ENCODING_SKIPLIST     |	使用跳跃表和字典实现�
     redis> OBJECT ENCODING msg
     "embstr"
     
+***
 
