@@ -28,12 +28,16 @@
 每个对象都由一个 redisObject 结构表示：  
 
     typedef struct redisObject {
+    
         // 类型
         unsigned type:4;
+        
         // 编码
         unsigned encoding:4;
+        
         // 指向底层实现数据结构的指针
         void *ptr;
+        
     } robj;  
     
 对象的类型：  
