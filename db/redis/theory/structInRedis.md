@@ -226,7 +226,7 @@
 > 
 > 当一个列表键只包含**少量**列表项， 并且每个列表项要么就是**小整数值**， 要么就是长度比**较短的字符串**， 那么 Redis 就会使用压缩列表来做列表键的底层实现。
 
-图: ![ziplist](./../../../resources/png/zipList.png) 
+图: ![ziplist](./../../../resources/png/zipList.png)   
  
 图: ![zipListNode](./../../../resources/png/zipListNode.png)  
 
@@ -347,7 +347,7 @@ REDIS_ZSET      |	REDIS_ENCODING_SKIPLIST     |	使用跳跃表和字典实现�
 > 1. 哈希对象保存的所有键值对的键和值的字符串长度都小于 64 字节；  
 > 1. 哈希对象保存的键值对数量小于 512 个；  
 
-#### 7.4 哈希对象
+#### 7.4 集合对象
 集合对象的编码可以是 intset 或者 hashtable
 
 + intset 编码的集合对象使用整数集合作为底层实现， 集合对象包含的所有元素都被保存在整数集合里面  
