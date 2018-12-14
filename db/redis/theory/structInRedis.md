@@ -9,7 +9,68 @@
 
 ### 1. 简单动态字符串
 
+    struct sdshdr {
+    
+        // 记录 buf 数组中已使用字节的数量
+        // 等于 SDS 所保存字符串的长度
+        int len;
+    
+        // 记录 buf 数组中未使用字节的数量
+        int free;
+    
+        // 字节数组，用于保存字符串
+        char buf[];
+    
+    };
+
 ### 2. 链表
++ 节点：
+
+
+    typedef struct listNode {
+    
+        // 前置节点
+        struct listNode *prev;
+    
+        // 后置节点
+        struct listNode *next;
+    
+        // 节点的值
+        void *value;
+    
+    } listNode;  
+    
+    
+
+图 ![node](./../../../resources/png/listNode.png)  
+
++ 表：
+
+
+    typedef struct list {
+    
+        // 表头节点
+        listNode *head;
+    
+        // 表尾节点
+        listNode *tail;
+    
+        // 链表所包含的节点数量
+        unsigned long len;
+    
+        // 节点值复制函数
+        void *(*dup)(void *ptr);
+    
+        // 节点值释放函数
+        void (*free)(void *ptr);
+    
+        // 节点值对比函数
+        int (*match)(void *ptr, void *key);
+    
+    } list;
+
+图 ![list](./../../../resources/png/list.png)
+
 
 ### 3. 字典
 
@@ -137,5 +198,30 @@ REDIS_ZSET      |	REDIS_ENCODING_SKIPLIST     |	使用跳跃表和字典实现�
 >
 > 1. 哈希对象保存的所有键值对的键和值的字符串长度都小于 64 字节；  
 > 1. 哈希对象保存的键值对数量小于 512 个；  
+
+#### 7.4 哈希对象
+集合对象的编码可以是 intset 或者 hashtable
+
++ intset 编码的集合对象使用整数集合作为底层实现， 集合对象包含的所有元素都被保存在整数集合里面  
++ hashtable 编码的集合对象使用字典作为底层实现， 字典的每个键都是一个字符串对象， 每个字符串对象包含了一个集合元素， 而字典的值则全部被设置为 NULL  
+
+##### 编码转换
+> 当集合对象可以同时满足以下两个条件时， 对象使用 intset 编码：
+>
+> 1. 集合对象保存的所有元素都是整数值；  
+> 1. 集合对象保存的元素数量不超过 512 个；  
+
+#### 7.5 有序集合对象
+有序集合的编码可以是 ziplist 或者 skiplist 。
+
++ ziplist 编码的有序集合对象使用压缩列表作为底层实现， 每个集合元素使用两个紧挨在一起的压缩列表节点来保存， 第一个节点保存元素的成员（member）， 而第二个元素则保存元素的分值（score）。  
++ skiplist 编码的有序集合对象使用 zset 结构作为底层实现， 一个 zset 结构同时包含一个字典和一个跳跃表  
+
+##### 编码的转换
+> 当有序集合对象可以同时满足以下两个条件时， 对象使用 ziplist 编码：
+>
+> 1. 有序集合保存的元素数量小于 128 个；  
+> 1. 有序集合保存的所有元素成员的长度都小于 64 字节；  
+
 
 
