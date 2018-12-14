@@ -50,6 +50,13 @@ REDIS_HASH	    |   哈希对象
 REDIS_SET	    |   集合对象
 REDIS_ZSET	    |   有序集合对象
 
+对一个数据库键执行 TYPE 命令时， 命令返回的结果为数据库键对应的值对象的类型， 而不是键对象的类型：
+
+    redis> SET msg 'hello world'
+    OK
+    redis> TYPE msg
+    string
+
 表: 对象的编码  
 
 编码常量	                    |   编码所对应的底层数据结构
@@ -78,3 +85,13 @@ REDIS_SET       |	REDIS_ENCODING_INTSET       |	使用整数集合实现的集�
 REDIS_SET       |	REDIS_ENCODING_HT           |	使用字典实现的集合对象。
 REDIS_ZSET      |	REDIS_ENCODING_ZIPLIST      |	使用压缩列表实现的有序集合对象。
 REDIS_ZSET      |	REDIS_ENCODING_SKIPLIST     |	使用跳跃表和字典实现的有序集合对象。
+
+使用 OBJECT ENCODING 命令可以查看一个数据库键的值对象的编码：
+
+    redis> SET msg "hello wrold"
+    OK
+    
+    redis> OBJECT ENCODING msg
+    "embstr"
+    
+
