@@ -4,9 +4,10 @@
 1. 排他锁的实现。
 1. 偏向锁
 1. 估算cpu的利用率
+
  
-    while(true){
-	    sleep(1);
+    while(true){  
+        sleep(1);  
     }  
     
 1. 求一个字符串的最长无重复子串
