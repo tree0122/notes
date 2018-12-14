@@ -184,7 +184,7 @@
     
     } zskiplistNode;
 
-图: ![dict](./../../../resources/png/skipListNode.png)   
+图: ![skipListNode](./../../../resources/png/skipListNode.png)   
     
 跳跃表：
 
@@ -201,14 +201,35 @@
     
     } zskiplist;
 
-图: ![dict](./../../../resources/png/skipList.png)  
+图: ![skipList](./../../../resources/png/skipList.png)  
 
 ### 5. 整数集合
+整数节后：
+
+    typedef struct intset {
+    
+        // 编码方式
+        uint32_t encoding;
+    
+        // 集合包含的元素数量
+        uint32_t length;
+    
+        // 保存元素的数组
+        int8_t contents[];
+    
+    } intset;
+
+图: ![intset](./../../../resources/png/intset.png)    
 
 ### 6. 压缩列表（ziplist）  
 > ziplist是**列表键**和**哈希键**的底层实现之一。 
 > 
 > 当一个列表键只包含**少量**列表项， 并且每个列表项要么就是**小整数值**， 要么就是长度比**较短的字符串**， 那么 Redis 就会使用压缩列表来做列表键的底层实现。
+
+图: ![ziplist](./../../../resources/png/zipList.png) 
+ 
+图: ![zipListNode](./../../../resources/png/zipListNode.png)  
+
 
 ### 7. 对象
 > Redis基于这些数据结构创建了一个**对象系统**， 这个系统包含**字符串对象**、**列表对象**、**哈希对象**、**集合对象**和**有序集合对象**这五种类型的对象。  
