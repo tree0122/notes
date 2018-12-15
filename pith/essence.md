@@ -1,5 +1,21 @@
 ### newLand
 
+#### 2017-01-01
+>+ [极客学院wiki][]
+>+ [慕课网][]
+>+ [图灵社区][]
+>+ [并发编程网][]
+>+ [机器学习常用 35 大算法盘点][]
+>+ [importNew][]
+>+ [OverAPI(各种api)][]
+>+ [王晓华CSDN博客（算法的乐趣 作者）][]
+>+ [i春秋][]
+>+ [网易公开课][]
+>+ [网易云讲堂][]
+>+ [Ubuntu系统下安装字体和切换默认字体][]
+>+ [编程技术书列表][]
+>+ [VirtualBox + Secure Boot + Ubuntu = fail][]
+
 #### 2018-12-14
 >+ [高并发][]  
 >+ [缓存.美团][]  
@@ -23,6 +39,25 @@
 
 
 ---
+
+
+[//]: 2017-01-01
+
+[极客学院wiki]: http://wiki.jikexueyuan.com
+[慕课网]: http://www.imooc.com/article
+[图灵社区]: http://www.ituring.com.cn/book/collected/3
+[并发编程网]: http://ifeve.com/
+[机器学习常用 35 大算法盘点]: https://mp.weixin.qq.com/s?__biz=MzI3MTA0MTk1MA==&mid=2651986917&idx=2&sn=5ef23083abacb8ec10bae272a6523acb&chksm=f1216f14c656e602deead8940252d779387ecea92e7278ea7822a32fe65925d2a6ab23c5e972&scene=2&srcid=0911mvqhy7LGW7IT5U5IsDnf&from=timeline&isappinstalled=0&pass_ticket=ybVnnsWqdSCqr6ueKf5VpPfuJxVh%2FsH%2BhKO5hupPAxA6bk%2BO0UTANSEsYo8aS64N
+[importNew]: http://www.importnew.com/
+[OverAPI(各种api)]: http://overapi.com/?url_type=39&object_type=webpage&pos=1
+[王晓华CSDN博客（算法的乐趣 作者）]: http://blog.csdn.net/orbit
+[i春秋]: http://www.ichunqiu.com/
+[网易公开课]: http://open.163.com/
+[网易云讲堂]: http://study.163.com/
+[Ubuntu系统下安装字体和切换默认字体]: https://my.oschina.net/itblog/blog/278566 
+[编程技术书列表]: https://www.oschina.net/question/2529065_2232659
+[VirtualBox + Secure Boot + Ubuntu = fail]: https://stegard.net/2016/10/virtualbox-secure-boot-ubuntu-fail/
+
 
 [//]:  2018-12-14
 
