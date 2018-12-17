@@ -37,6 +37,8 @@
 >+ [Gossip协议][]
 >+ [大众点评订单系统分库分表实践][]
 
+#### 2018-12-17
+>+ [Kafka][]
 
 ---
 
@@ -81,3 +83,7 @@
 [AQS原理浅析]: http://ifeve.com/java-special-troops-aqs/
 [Gossip协议]: https://www.jianshu.com/p/3aa9a109072c
 [大众点评订单系统分库分表实践]: https://tech.meituan.com/dianping_order_db_sharding.html
+
+[//]: 2018-12-17
+
+[Kafka]: http://www.jasongj.com/tags/Kafka/
