@@ -42,6 +42,8 @@
 
 #### 2018-12-19
 >+ [Kafka中文文档][]
+>+ [常用的分布式事务解决方案][]
+>+ [分布式事务一致性][]
 
 ---
 
@@ -94,3 +96,5 @@
 [//]: 2018-12-19
 
 [Kafka中文文档]: http://kafka.apachecn.org/
+[常用的分布式事务解决方案]: https://juejin.im/post/5aa3c7736fb9a028bb189bca
+[分布式事务一致性]: https://yq.aliyun.com/articles/582282
