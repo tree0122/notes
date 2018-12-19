@@ -40,6 +40,9 @@
 #### 2018-12-17
 >+ [Kafka][]
 
+#### 2018-12-19
+>+ [Kafka中文文档][]
+
 ---
 
 
@@ -87,3 +90,7 @@
 [//]: 2018-12-17
 
 [Kafka]: http://www.jasongj.com/tags/Kafka/
+
+[//]: 2018-12-19
+
+[Kafka中文文档]: http://kafka.apachecn.org/
