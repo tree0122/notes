@@ -193,13 +193,17 @@ BASE理论
 #### 五. spring中的事务机制(@Transactional)
 
 ##### [Spring 事务的传播属性][1]
-所谓spring事务的传播属性，就是定义在存在多个事务同时存在的时候，spring应该如何处理这些事务的行为。这些属性在TransactionDefinition中定义，具体常量的解释见下表:
+所谓spring事务的传播属性，就是定义在存在多个事务同时存在的时候，spring应该如何处理这些事务的行为。这些属性在TransactionDefinition中定义，具体常量的解释见下表:  
 
-|常量名称    |   常量解释|
-|--- | ---   | ---|
-PROPAGATION_REQUIRED    | 支持当前事务，如果当前没有事务，就新建一个事务。这是最常见的选择，也是 Spring 默认的事务的传播
-
-
+常量名称    |   常量解释
+--- | ---   
+PROPAGATION_REQUIRED        |	支持当前事务，如果当前没有事务，就新建一个事务。这是最常见的选择，也是 Spring 默认的事务的传播。
+PROPAGATION_REQUIRES_NEW    |	新建事务，如果当前存在事务，把当前事务挂起。新建的事务将和被挂起的事务没有任何关系，是两个独立的事务，外层事务失败回滚之后，不能回滚内层事务执行的结果，内层事务失败抛出异常，外层事务捕获，也可以不处理回滚操作
+PROPAGATION_SUPPORTS        |	支持当前事务，如果当前没有事务，就以非事务方式执行。
+PROPAGATION_MANDATORY       |	支持当前事务，如果当前没有事务，就抛出异常。
+PROPAGATION_NOT_SUPPORTED   |	以非事务方式执行操作，如果当前存在事务，就把当前事务挂起。
+PROPAGATION_NEVER	        |   以非事务方式执行，如果当前存在事务，则抛出异常。
+PROPAGATION_NESTED	        |   如果一个活动的事务存在，则运行在一个嵌套的事务中。如果没有活动事务，则按REQUIRED属性执行。它使用了一个单独的事务，这个事务拥有多个可以回滚的保存点。内部事务的回滚不会对外部事务造成影响。它只对DataSourceTransactionManager事务管理器起效。
 
 ##### Spring中的隔离级别
 
