@@ -207,8 +207,57 @@ PROPAGATION_NESTED	        |   如果一个活动的事务存在，则运行在�
 
 ##### Spring中的隔离级别
 
+常量  |	解释
+--- |   ---
+ISOLATION_DEFAULT           |	这是个 PlatfromTransactionManager 默认的隔离级别，使用数据库默认的事务隔离级别。另外四个与 JDBC 的隔离级别相对应。
+ISOLATION_READ_UNCOMMITTED  |	这是事务最低的隔离级别，它充许另外一个事务可以看到这个事务未提交的数据。这种隔离级别会产生脏读，不可重复读和幻像读。
+ISOLATION_READ_COMMITTED    |	保证一个事务修改的数据提交后才能被另外一个事务读取。另外一个事务不能读取该事务未提交的数据。
+ISOLATION_REPEATABLE_READ   |   这种事务隔离级别可以防止脏读，不可重复读。但是可能出现幻像读。
+ISOLATION_SERIALIZABLE      |	这是花费最高代价但是最可靠的事务隔离级别。事务被处理为顺序执行。
+
 
 ##### 事务的嵌套
+
+假设外层事务 Service A 的 Method A() 调用 内层Service B 的 Method B()
+
++. PROPAGATION_REQUIRED(spring 默认)
+
+    如果ServiceB.methodB() 的事务级别定义为 PROPAGATION_REQUIRED，那么执行 ServiceA.methodA() 的时候spring已经起了事务，这时调用 ServiceB.methodB()，ServiceB.methodB() 看到自己已经运行在 ServiceA.methodA() 的事务内部，就不再起新的事务。
+    假如 ServiceB.methodB() 运行的时候发现自己没有在事务中，他就会为自己分配一个事务。
+    这样，在 ServiceA.methodA() 或者在 ServiceB.methodB() 内的任何地方出现异常，事务都会被回滚。
+
++. PROPAGATION_REQUIRES_NEW
+
+    比如我们设计 ServiceA.methodA() 的事务级别为 PROPAGATION_REQUIRED，ServiceB.methodB() 的事务级别为 PROPAGATION_REQUIRES_NEW。
+    那么当执行到 ServiceB.methodB() 的时候，ServiceA.methodA() 所在的事务就会挂起，ServiceB.methodB() 会起一个新的事务，等待 ServiceB.methodB() 的事务完成以后，它才继续执行。
+    他与 PROPAGATION_REQUIRED 的事务区别在于事务的回滚程度了。因为 ServiceB.methodB() 是新起一个事务，那么就是存在两个不同的事务。如果 ServiceB.methodB() 已经提交，那么 ServiceA.methodA() 失败回滚，ServiceB.methodB() 是不会回滚的。如果 ServiceB.methodB() 失败回滚，如果他抛出的异常被 ServiceA.methodA() 捕获，ServiceA.methodA() 事务仍然可能提交(主要看B抛出的异常是不是A会回滚的异常)。
+
++. PROPAGATION_SUPPORTS
+
+    假设ServiceB.methodB() 的事务级别为 PROPAGATION_SUPPORTS，那么当执行到ServiceB.methodB()时，如果发现ServiceA.methodA()已经开启了一个事务，则加入当前的事务，如果发现ServiceA.methodA()没有开启事务，则自己也不开启事务。这种时候，内部方法的事务性完全依赖于最外层的事务。
+
++. PROPAGATION_NESTED
+
+    现在的情况就变得比较复杂了, ServiceB.methodB() 的事务属性被配置为 PROPAGATION_NESTED, 此时两者之间又将如何协作呢?  ServiceB#methodB 如果 rollback, 那么内部事务(即 ServiceB#methodB) 将回滚到它执行前的 SavePoint 而外部事务(即 ServiceA#methodA) 可以有以下两种处理方式:
+    
+    a、捕获异常，执行异常分支逻辑
+    
+    `void methodA() { 
+    
+            try { 
+    
+                ServiceB.methodB(); 
+    
+            } catch (SomeException) { 
+    
+                // 执行其他业务, 如 ServiceC.methodC(); 
+    
+            } 
+    
+        }`
+    这种方式也是嵌套事务最有价值的地方, 它起到了分支执行的效果, 如果 ServiceB.methodB 失败, 那么执行 ServiceC.methodC(), 而 ServiceB.methodB 已经回滚到它执行之前的 SavePoint, 所以不会产生脏数据(相当于此方法从未执行过), 这种特性可以用在某些特殊的业务中, 而 PROPAGATION_REQUIRED 和 PROPAGATION_REQUIRES_NEW 都没有办法做到这一点。
+    
+    b、 外部事务回滚/提交 代码不做任何修改, 那么如果内部事务(ServiceB#methodB) rollback, 那么首先 ServiceB.methodB 回滚到它执行之前的 SavePoint(在任何情况下都会如此), 外部事务(即 ServiceA#methodA) 将根据具体的配置决定自己是 commit 还是 rollback
 
 
 
