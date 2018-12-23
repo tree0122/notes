@@ -9,6 +9,8 @@
 + [CyclicBarrier][8]
 + [Exchanger][9]
 + [AQS(AbstractQueuedSynchronizer)][10]
++ [Thread][11]
++ [ThreadPool][12]
 
 
 [1]: https://blog.csdn.net/javazejian/article/details/72828483 "深入理解Java并发之synchronized实现原理"
@@ -21,5 +23,6 @@
 [8]: https://www.jianshu.com/p/424374d71b67 "深入浅出java CyclicBarrier"
 [9]: https://blog.csdn.net/u014634338/article/details/78385521 "Exchanger源码分析"
 [10]: https://juejin.im/entry/58e6f484ac502e006c2b6887 "AbstractQueuedSynchronizer 超详细原理解析"
-[11]: https://juejin.im/post/5ae6dc04f265da0ba351d3ff "彻底理解synchronized"
-
+[001]: https://juejin.im/post/5ae6dc04f265da0ba351d3ff "彻底理解synchronized"
+[11]: https://www.jianshu.com/p/fa6667dfb4ca "多线程编程基础之 wait()、notify()"
+[12]: http://ifeve.com/java-threadpool/ "Java线程池的分析和使用"
