@@ -1,5 +1,8 @@
 ### newLand
 
+#### 2018-12-26
+> [MySQL 加锁处理分析][]
+
 #### 2017-01-01
 >+ [极客学院wiki][]
 >+ [慕课网][]
@@ -47,6 +50,10 @@
 
 ---
 
+[//]: 2018-12-26
+
+[MySQL 加锁处理分析]: http://hedengcheng.com/?p=771#_Toc374698307
+
 
 [//]: 2017-01-01
 
@@ -61,7 +68,7 @@
 [i春秋]: http://www.ichunqiu.com/
 [网易公开课]: http://open.163.com/
 [网易云讲堂]: http://study.163.com/
-[Ubuntu系统下安装字体和切换默认字体]: https://my.oschina.net/itblog/blog/278566 
+[Ubuntu系统下安装字体和切换默认字体]: https://my.oschina.net/itblog/blog/278566
 [编程技术书列表]: https://www.oschina.net/question/2529065_2232659
 [VirtualBox + Secure Boot + Ubuntu = fail]: https://stegard.net/2016/10/virtualbox-secure-boot-ubuntu-fail/
 
