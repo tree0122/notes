@@ -1,7 +1,11 @@
 ### newLand
 
+#### 2019-01-07
+>1. [多github帐号的SSH key切换][]
+>1. [从头到尾彻底理解KMP][]
+
 #### 2018-12-26
-> [MySQL 加锁处理分析][]
+>+ [MySQL 加锁处理分析][]
 
 #### 2017-01-01
 >+ [极客学院wiki][]
@@ -49,6 +53,12 @@
 >+ [分布式事务一致性][]
 
 ---
+
+[//]: 2019-01-07
+
+[多github帐号的SSH key切换]: https://www.cnblogs.com/BeginMan/p/3548139.html
+[从头到尾彻底理解KMP]: https://blog.csdn.net/v_july_v/article/details/7041827
+
 
 [//]: 2018-12-26
 
