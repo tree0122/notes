@@ -16,5 +16,7 @@
 1. [Spring AOP 所有切入点指示符详解](https://blog.csdn.net/qq_23167527/article/details/78623639)
 1. [SpringBoot AOP的使用](https://juejin.im/post/5c47e4b26fb9a049b50726d8)
 1. [Spring中的事件驱动模型（一）](https://juejin.im/post/5a8eb261f265da4e9e307230)
+1. [详解Spring事件驱动模型](https://jinnianshilongnian.iteye.com/blog/1902886)
+
 
 
