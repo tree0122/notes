@@ -17,6 +17,8 @@
 1. [SpringBoot AOP的使用](https://juejin.im/post/5c47e4b26fb9a049b50726d8)
 1. [Spring中的事件驱动模型（一）](https://juejin.im/post/5a8eb261f265da4e9e307230)
 1. [详解Spring事件驱动模型](https://jinnianshilongnian.iteye.com/blog/1902886)
+1. [[Google Guava] 11-事件总线](https://yq.aliyun.com/articles/88739?spm=a2c4e.11153940.0.0.20096d45PpDls6)
+1. [Guava - EventBus(事件总线)](https://yq.aliyun.com/articles/51459)
 
 
 
