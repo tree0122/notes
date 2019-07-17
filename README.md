@@ -23,6 +23,7 @@
 1. [详解Spring事件驱动模型](https://jinnianshilongnian.iteye.com/blog/1902886)
 1. [[Google Guava] 11-事件总线](https://yq.aliyun.com/articles/88739?spm=a2c4e.11153940.0.0.20096d45PpDls6)
 1. [Guava - EventBus(事件总线)](https://yq.aliyun.com/articles/51459)
-
+1. [深入剖析 mybatis 原理（一）](https://www.jianshu.com/p/0fb930e9c416)
+1. [深入剖析 mybatis 原理（三）如何整合Spring](https://www.jianshu.com/p/c2b2d6f90ba5)
 
 
