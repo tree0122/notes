@@ -25,5 +25,6 @@
 1. [Guava - EventBus(事件总线)](https://yq.aliyun.com/articles/51459)
 1. [深入剖析 mybatis 原理（一）](https://www.jianshu.com/p/0fb930e9c416)
 1. [深入剖析 mybatis 原理（三）如何整合Spring](https://www.jianshu.com/p/c2b2d6f90ba5)
+1. [阿里RocketMQ如何解决消息的顺序和重复两大硬伤](https://blog.csdn.net/yinni11/article/details/81149758)
 
 
