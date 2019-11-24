@@ -18,5 +18,5 @@
 + IP在首部有`一个8bit的协议域(icmp, igmp, tcp, udp, esp, gre)`
 + TCP和UDP都用`一个16bit的端口号表示不同应用程序(ftp, telnet, http)`
 
-数据封装: ![list](./../../resources/png/computer/数据封装.png)
+数据封装: ![list](../../resources/png/computer/dataFrame.png)
 
