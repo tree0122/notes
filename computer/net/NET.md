@@ -12,14 +12,11 @@
 1. 应用层
    `HTTP` `DNS` `HTTPS`
 
-```mermaid
-graph LR
-A[方形] -->B(圆角)
-    B --> C{条件a}
-    C -->|a=1| D[结果1]
-    C -->|a=2| E[结果2]
-    F[横向流程图]
-```
-### **springboot**
-1. [springboot系列文章之启动原理详解](https://juejin.im/post/5b79a6e651882542aa1b2c22)
+### **封装**
++ 以太网数据帧的物理特性是其`长度必须在46-1500字节`
++ 以太网的帧首部也有一个`16bit的帧类型域(ip, arp, rarp)`
++ IP在首部有`一个8bit的协议域(icmp, igmp, tcp, udp, esp, gre)`
++ TCP和UDP都用`一个16bit的端口号表示不同应用程序(ftp, telnet, http)`
+
+数据封装: ![list](./../../../resources/png/computer/数据封装.png)
 
