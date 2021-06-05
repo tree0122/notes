@@ -100,7 +100,7 @@ worker node: 工作节点
 ![kubeadm-func](../ref/img/kubeadm-func.jpg)
 
 #### kubeadm部署的pod
-![kubeadm部署的pod](../ref/img/kubeadm部署的pod.jpg)
+![kubeadm部署的pod](../ref/img/kubeadmPod.jpg)
 
 ### k8s容器间网络接口
 - CNI: Container Network Interface
@@ -121,4 +121,4 @@ worker node: 工作节点
 
 kubeadm的执行流程
 #### kubeadm的执行流程
-![kubeadm的执行流程](../ref/img/kubeadm的执行流程.jpg)
+![kubeadm的执行流程](../ref/img/kubeadmFlow.jpg)
