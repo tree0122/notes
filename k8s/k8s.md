@@ -936,3 +936,206 @@ ubectl create secret docker-registry my-secret --docker-server=DOCKER_REGISTRY_S
 1. status.
 1. spec.
 1. resourceFieldRef: 
+
+
+***
+## 第18节(ReplicaSet)
+k8s以应用(Pod)为中心
+应用编排
+  部署、扩展、更新、回滚
+
+### 负责应用编排的控制器有如下几种
+1. ReplicationController: 早期的Pod控制器(已废弃)
+1. ReplicaSet: 副本集, 负责管理一个应用的多个副本
+1. Deployment: 部署(高级控制器)，不直接管理Pod，借助于ReplicaSet来管理Pod
+1. DaemonSet: 守护进程集, 用于确保在每个节点上仅运行某个应用的一个Pod副本
+1. StatefulSet: 功能类似Deployment，但专用于编排有状态应用
+1. Job：有终止期限的作业式任务，而非一直处于运行状态的服务进程
+1. CronJob：有终止期限的周期性作业任务
+
+### 定义要素
+1. 标签选择器
+1. 期望的副本数
+1. Pod模版
+```
+  kind: ReplicaSet
+  spec:
+    minReadySeconds <int> #
+    replicas <int> #
+    selector:
+      matchExpressions <[]Object>
+      matchLabels: <map[string][string]>
+        app: demoapp
+    template:
+      metadata:
+        labels:
+          app: demoapp
+      spec:
+        containers:
+```
+
+### ReplicaSet的更新机制(手动删除式更新)
+1. 单批次删除所有Pod，一次完成所有更新，服务会中断一段时间
+1. 灰度(滚动)更新: 分批次更新
+1. set image: 更新应用版本，但对replicaSet来说，仅能更新APIServer中的定义
+
+
+***
+## 第19节(blueGreenAndRoll)
+
+
+***
+## 第20节(Deployment&DaemonSet&Job&CronJob)
+### Deployment
+```
+apiVersion: apps/v1
+kind: Deployment
+spec:
+  minReadySeconds <int>
+  replicas <int>
+  selector <obj>
+  tmeplate <obj> # Pod定义
+  revisionHistoryLimit <int>
+  strategy #更新策略
+    type
+    rollingUpdate
+      maxSurge
+      maxUnavailable
+  progressDeadlineSeconds <int>
+  paused
+```
+kubectl rollout --help # 滚动命令
+
+### DaemonSet
+```
+apiVersion: apps/v1
+kind: DaemonSet
+spec:
+  minReadySeconds <int>
+  selector <obj>
+  tmeplate <obj> # Pod定义
+  revisionHistoryLimit <int>
+  updateStrategy #更新策略
+    type
+    rollingUpdate
+      maxUnavailable
+```
+
+### Job(69min)
+```
+apiVersion: batch/v1
+kind: Job
+spec:
+  selector <obj>
+  tmeplate <obj> # Pod定义
+  completions <int>
+  ttlSecondsAfterFinished <int>
+  parallelism <int>
+  backoffLimit <int>
+  activeDeadlineSeconds <int>
+```
+
+### CronJob(80min)
+```
+apiVersion: batch/v1beta1
+kind: CronJob
+spec:
+  jobTemplate <obj> # job作业模版
+    metadata <obj>
+    spec <obj>
+  schedule <str>
+  concurrencyPolicy <str> # 并发策略，Allow, Forbid, Replace
+  failedJobsHistoryLimit <int>
+  successfulJobsHistoryLimit <int>
+  startingDeadLineSeconds <int>
+  suspend <boolean>
+```
+
+***
+## 第21节(StatefulSet)
+### StatefulSet(20m)
+通用的有状态应用控制器
+
+1. 每个Pod都有自己的唯一标识，故障时，它只能被拥有同一标识的新实例所取代；
+    - ¥{STATEFULSET_NAME}-${ORDINAL}: web-0, web-1, web-2
+    - Headless Service
+1. 若有必要，可为每个Pod配置专用的volume，其只能时PVC格式；
+
+### awesome operator(有状态应用的集群管理器 35m)
+
+### StatefulSet 格式
+```
+spec:
+  replicas 
+  selector
+  template
+  serviceName
+  volumeClainTemplates
+    apiVersion
+    kind
+    meatdata
+    spec
+  podMangementPolicy <str> # Pod管理策略，默认的"OrderedReady"表示顺利创建并逆序删除，另一可用值"Parallel"表示并行模式
+```
+
+### longhorn(50m)
+
+
+
+***
+## 第31节(Ingress)
+### 外部流量进入集群内部的实现
+1. Service:
+  NodePort
+  externalIp
+1. host:
+  hostPort
+  hostNetwork
+1. Ingress: 集群外部注入集群内部的流量
+  Egress: 集群内部流出到集群外部的流量
+
+### Ingress 和 Ingress Controller
+Ingress: 是一个标准的资源
+Ingress Controller: Ingress控制器
+  http/https代理服务
+    Ingress-Nginx: Kong
+    HAProxy
+    Envoy: Contour, Gloo
+    Traefik
+
+### Ingress规范(34m)
+```
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name:
+  annotations:
+    kubernetes.io/ingress.class: <str>
+spec:
+  rules <[]obj>
+  - host <str>
+    paths <[]obj>
+    - path
+      pathType
+      backend
+        resouce
+        service
+          name:
+          port:
+            name:
+            number:
+  tls
+  - hosts <[]str>
+    secretName
+  backend
+
+```
+
+
+***
+## 第32节(Contour)
+### Contour(38m)
+
+
+***
+## 第33节()
