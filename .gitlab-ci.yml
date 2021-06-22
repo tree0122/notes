@@ -12,3 +12,4 @@ rspec:
 rubocop:
   script:
     - bundle exec rubocop
+
