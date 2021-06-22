@@ -104,7 +104,7 @@ worker node: 工作节点
 
         kubeadm init --help
 
-        kubeadm init --image-repository regitsty.aliyuncs.com/google_containers --kubernetes-version $Version
+        kubeadm init --image-repository registry.aliyuncs.com/google_containers --kubernetes-version $Version
         --control-plane-endpoint $MASTER (控制平面的地址)
         --apiserver-advertise-address $MASTER_IP (apiserver的地址)
         --pod-network-cidr 10.244.0.0/16 
