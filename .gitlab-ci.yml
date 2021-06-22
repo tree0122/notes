@@ -1,33 +1,14 @@
-# requiring the environment of NodeJS 10
-image: node:10
-
-# add 'node_modules' to cache for speeding up builds
-cache:
-  paths:
-    - node_modules/ # Node modules and dependencies
-
 before_script:
-  - npm install gitbook-cli -g # install gitbook
-  - gitbook fetch 3.2.3 # fetch final stable version
-  - gitbook install # add any requested plugins in book.json
+  - apt-get update -qq && apt-get install -y -qq sqlite3 libsqlite3-dev nodejs
+  - ruby -v
+  - which ruby
+  - gem install bundler --no-ri --no-rdoc
+  - bundle install --jobs $(nproc)  "${FLAGS[@]}"
 
-test:
-  stage: test
+rspec:
   script:
-    - gitbook build . public # build to public path
-  only:
-    - branches # this job will affect every branch except 'master'
-  except:
-    - master
-    
-# the 'pages' job will deploy and build your site to the 'public' path
-pages:
-  stage: deploy
+    - bundle exec rspec
+
+rubocop:
   script:
-    - gitbook build . public # build to public path
-  artifacts:
-    paths:
-      - public
-    expire_in: 1 week
-  only:
-    - master # this job will affect only the 'master' branch
+    - bundle exec rubocop
