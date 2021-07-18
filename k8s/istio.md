@@ -123,3 +123,17 @@ Envoy是一个L7代理和连接总线，用于现代大型面向服务架构
 
 ![06buildBazel_1](../ref/img/istio/06buildBazel_1.jpg)
 
+![06buildDocker](../ref/img/istio/06buildDocker.jpg)
+
+![06confGen](../ref/img/istio/06confGen.jpg)
+
+![06baseImage](../ref/img/istio/06baseImage.jpg)
+
+![06toolApp](../ref/img/istio/06toolApp.jpg)
+
+![06startEnvoy](../ref/img/istio/06startEnvoy.jpg)
+
+![06listenerConf](../ref/img/istio/06listenerConf.jpg)
+
+
+
