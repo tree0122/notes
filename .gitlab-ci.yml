@@ -1,20 +1,16 @@
-# before_script:
-#   - apt-get update -qq && apt-get install -y -qq sqlite3 libsqlite3-dev nodejs
-#   - ruby -v
-#   - which ruby
-#   - gem install bundler --no-ri --no-rdoc
-#   - bundle install --jobs $(nproc)  "${FLAGS[@]}"
+before_script:
+  - apt-get update -qq && apt-get install -y -qq sqlite3 libsqlite3-dev nodejs
+  - ruby -v
+  - which ruby
+  - gem install bundler --no-ri --no-rdoc
+  - bundle install --jobs $(nproc)  "${FLAGS[@]}"
 
-# rspec:
-#   script:
-#     - bundle exec rspec
-
-# rubocop:
-#   script:
-#     - bundle exec rubocop
-
-
-test:
+rspec:
   script:
-    - echo "you are runner!!!"
+    - bundle exec rspec
+
+rubocop:
+  script:
+    - bundle exec rubocop
+
 

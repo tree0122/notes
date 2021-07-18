@@ -1081,6 +1081,107 @@ spec:
 ### longhorn(50m)
 
 
+***
+## 第22节(auth)
+> 认证，授权，准入控制
+
+### Authn, 认证 通行证
+
+- **用户**
+  - User Account
+  - Service Account
+
+- **用户组**
+  - system:unauthenticated
+  - system:authenticated
+  - system:serviceaccounts 所有名称空间
+  - system:serviceaccounts:<namespace>
+
+- **认证方式**
+  1. X509数字证书认证
+    
+    证书中的Subject中
+    CommonName, CN: 用户名
+    Orgnization, O: 组名
+
+  1. 引导令牌(Token)
+
+  1. 静态令牌: 存储于apiServer进程可直接加载的文件中的令牌
+
+  1. 静态密码: 存储于apiServer进程可直接加载的文件中的账号密码
+
+  1. ServiceAccount令牌
+
+  1. OpenID Connect令牌: OAuth2
+
+  1. Webhook令牌
+
+  1. 代理认证
+
+### Authz, 授权 权限管理和分配
+
+**授权方式**:
+  1. Node
+  1. ABAC: Attribution, 基于属性
+  1. RBAC: RoleBased AC, 基于角色的访问
+  1. Webhook
+
+### Admission, 准入控制。
+
+检测资源是否合规，准入控制操作，只作用于用户的“写请求”
+
+**准入控制器**
+  1. LimitRanger: 单个pod的限制
+  1. ResourceQuota: 整体的限制
+  1. PSP: PodSecurityPolicy 限制用户能使用那些特权
+
+
+### 认证的实现(46m)
+
+**ServiceAccount令牌认证**, K8S自动为每个Pod注入一个ServiceAccount, 令牌在每个名称空间中，会自动存在一个ServiceAccount，将被该空间下
+
+**kubeconfig配置文件**
+
+
+***
+## 第23节(authz)
+
+
+
+***
+## 第24节(auths)
+
+
+
+***
+## 第25节(flannel)
+
+
+***
+## 第26节(Calico)
+
+
+***
+## 第27节(Calico)
+
+
+***
+## 第28节(networkPolicy)
+
+### 网络策略：管控pod间的通信流量(13m)
+
+  k8s的名称空间，仅用于为资源名称提供隔离机制
+
+
+
+***
+## 第29节(scheduler)
+
+
+***
+## 第30节(scheduler)
+
+### 污点容忍度(46m)
 
 ***
 ## 第31节(Ingress)
@@ -1105,42 +1206,261 @@ Ingress Controller: Ingress控制器
 
 ### Ingress规范(34m)
 ```
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name:
-  annotations:
-    kubernetes.io/ingress.class: <str>
+# v1beta1 Ingress 资源规范
+
+apiVersion: extensions/v1beta1 # 资源所属的api群组和版本
+kind: Ingress # 资源类型标识符
+metadata: # 元数据
+  name: <str> # 资源名称
+  annotations: # 资源注解: v1beta1使用下面的注解来指定要解析的控制器类型
+    kubernetes.io/ingress.class: <str> # 适配的Ingress控制器类别
+  namespace: <str> # 名称空间
 spec:
-  rules <[]obj>
-  - host <str>
-    paths <[]obj>
-    - path
-      pathType
-      backend
-        resouce
-        service
-          name:
-          port:
-            name:
-            number:
-  tls
-  - hosts <[]str>
-    secretName
-  backend
+  rules: <[]obj> # Ingress规则列表
+  - host: <str> # 虚拟主机的FQDN，支持"*"前缀通配符，不支持IP，不支持指定端口
+    http: <obj>
+      paths: <[]obj> # 虚拟主机PATH定义的列表，有path和backend组成
+      - path: <str> # 流量匹配的http path，必须以/开头
+        pathType: <str> # 匹配机制，支持 Exact, Prefix, ImplementationSpecific
+        backend: <obj> # 匹配到的流量转发到的目标后端
+          resource: <obj> # 引用的同一名称空间下的资源，与下面两个字段互斥
+          serviceName: <str> # 引用的service资源的名称
+          servicePort: <str> # service用于提供资源的端口
+  tls: <[]obj> # TLS配置，用于指定rules中定义的哪些host需要https模式
+  - hosts: <[]str> # 使用同一组证书的主机名称列表
+    secretName: <str> # 保存与数字证书和私钥信息的secret资源名称
+  backend: <obj> # 默认backend定义，可嵌套字段集使用格式跟rules字段中的相同
+  ingressClassName <str> # ingress类名称，用于指定适配的控制器
+
+
+# v1 Ingress资源规范
+
+apiVersion: networking.k8s.io/v1 # 资源所属的api群组和版本
+kind: Ingress # 资源类型标识符
+metadata: # 元数据
+  name: <str> # 资源名称
+  annotations: # 资源注解: v1beta1使用下面的注解来指定要解析的控制器类型
+    kubernetes.io/ingress.class: <str> # 适配的Ingress控制器类别
+  namespace: <str> # 名称空间
+spec:
+  rules: <[]obj> # Ingress规则列表
+  - host: <str> # 虚拟主机的FQDN，支持"*"前缀通配符，不支持IP，不支持指定端口
+    http: <obj>
+      paths: <[]obj>
+      - path: <str> # 流量匹配的http path，必须以/开头
+        pathType: <str> # 匹配机制，支持 Exact, Prefix, ImplementationSpecific
+        backend: <obj> # 匹配到的流量转发到的目标后端
+          resource: <obj> # 引用的同一名称空间下的资源，与下面两个字段互斥
+          service: <obj> # 关联的后端service对象
+            name: <str> # 后端service的名称
+            port: <obj> # 后端service上的端口对象
+              name: <str> # 端口名称
+              number: <int> # 端口号
+  tls: <[]obj> # TLS配置，用于指定rules中定义的哪些host需要https模式
+  - hosts: <[]str> # 使用同一组证书的主机名称列表
+    secretName: <str> # 保存与数字证书和私钥信息的secret资源名称
+  backend: <obj> # 默认backend定义，可嵌套字段集使用格式跟rules字段中的相同
+  ingressClassName <str> # ingress类名称，用于指定适配的控制器
+```
+
+### Q&A
+1. kubectl delete -A ValidatingWebhookConfiguration ingress-nginx-admission
+
+
+***
+## 第32节(Contour)
+### ingress-nginx的tls
+```
+生成私钥: (umask 077; openssl genrsa -out tls.key 2048)
+
+生成ca: openssl req -new -x509 -key tls.key -out tls.crt -subj "/CN=node01.tr" -days 365
+
+k8s环境生成secret: kubectl create secret tls ik8s-tls --cert=./tls.crt --key=./tls.key
+```
+
+### 配置 Ingress Nginx
+1. nginx.ingress.kubernetes.io/auth-type: [basic|digest], 用于指定认证类型，仅有两个可用值;
+1. nginx.ingress.kubernetes.io/auth-secret: secretName, 保存有认证信息的Secret资源名称;
+1. nginx.ingress.kubernetes.io/auth-secret-type: [auth-file|auth-map], Secret中的数据类型，auth-file表示数据为htpasswd直接生成的文件，auth-map表示数据是直接给出用户的名称和hash格式的密钥信息;
+1. nginx.ingress.kubernetes.io/auth-realm: "realm string", 认证时使用的realm信息;
+
+### Contour(38m) 
+```
+apiVersion: projectcontour.io/v1 # api群组及版本
+kind: HTTPProxy # CRD资源的名称
+metadata:
+  name: <str>
+  namespace: <str> # 名称空间级别的资源
+spec:
+  virtualhost: <VirtualHost> # FQDN格式的虚拟主机，类似Ingress中的host
+    fqdn <str> # 虚拟主机FQDN格式的名称
+    tls <TLS> # 启用HTTPS，且默认以301将HTTP请求重定向至HTTPS
+      secretName <str> # 存储证书和私钥信息的secret资源名称
+      minimumProtocolVersion <str> # 支持SSL/TLS协议的最低版本
+      passthrough <bool> # 是否启用透传模式，启用时控制器不卸载HTTPS会话
+      clientValidation <DownstreamValidation> # 验证客户端证书，可选配置
+        caSecret <str> # 用于验证客户端证书的CA的证书
+  routes <[]Route> # 定义路由规则
+    conditions <[]Condition> # 流量匹配条件，支持PATH前缀和标头匹配两种
+      prefix <str> # PATH路径前缀匹配，类似于Ingress的path字段
+    permitInsecure <bool> # 是否禁止默认的将HTTP重定向到HTTPS的功能
+    services <[]service> # 后端服务，会对应转换为Envoy的Cluster定义
+      name <str> # 服务名称
+      port <int> # 服务端口
+      protocol <str> # 到达后端服务的协议，可用值为tls、h2、h2c
+      validation <UpstreamValidation> # 是否校验服务端证书
+        caSecret <str>
+        subjectName <str> # 要求证书中使用的Subject值
+
+
+HTTPProxy高级路由
+
+spec:
+  routes <[]Route>  # 定义路由规则
+    conditions <[]Condition>
+      prefix <String>
+      header <HeaderCondition>   # 请求报文标头匹配
+        name <String>        # 标头名称
+        present <Boolean>   # true表示存在该标头即满足条件，值false没有意义
+        contains <String>   # 标头值必须包含的子串
+        notcontains <String>  # 标头值不能包含的子串
+        exact <String>      # 标头值精确的匹配
+        notexact <String>  # 标头值精确反向匹配，即不能与指定的值相同
+    services <[]Service>   # 后端服务，转换为Envoy的Cluster
+      name <String>
+      port <Integer>
+      protocol <String>  
+      weight <Int64>     # 服务权重，用于流量分割
+      mirror <Boolean>   # 流量镜像
+      requestHeadersPolicy <HeadersPolicy>   # 到上游服务器请求报文的标头策略
+        set <[]HeaderValue>   # 添加标头或设置指定标头的值
+          name <String>
+          value <String>
+        remove <[]String>   # 移除指定的标头
+      responseHeadersPolicy <HeadersPolicy>   # 到下游客户端响应报文的标头策略
+    loadBalancerPolicy <LoadBalancerPolicy>   # 指定要使用负载均衡策略
+      strategy <String>    # 具体使用的策略，支持Random、RoundRobin、Cookie
+# 和WeightedLeastRequest，默认为RoundRobin；
+    requestHeadersPolicy <HeadersPolicy>   # 路由级别的请求报文标头策略
+    reHeadersPolicy <HeadersPolicy>         # 路由级别的响应报文标头策略
+    pathRewritePolicy <PathRewritePolicy>  # URL重写
+      replacePrefix <[]ReplacePrefix>
+        prefix <String>         # PATH路由前缀
+        replacement <String>   # 替换为的目标路径
+
+
+
+HTTPProxy服务弹性
+
+spec:
+  routes <[]Route> 
+    timeoutPolicy <TimeoutPolicy>   # 超时策略
+      response <String>   # 等待服务器响应报文的超时时长
+      idle <String>   # 超时后，Envoy维持与客户端之间连接的空闲时长
+    retryPolicy <RetryPolicy>   # 重试策略
+      count <Int64>   # 重试的次数，默认为1
+      perTryTimeout <String>   # 每次重试的超时时长
+    healthCheckPolicy <HTTPHealthCheckPolicy>   # 主动健康状态检测
+      path <String>   # 检测针对的路径（HTTP端点）
+      host <String>   # 检测时请求的虚拟主机
+      intervalSeconds <Int64>   # 时间间隔，即检测频度，默认为5秒
+      timeoutSeconds <Int64>   # 超时时长，默认为2秒
+      unhealthyThresholdCount <Int64>   # 判定为非健康状态的阈值，即连续错误次数
+      healthyThresholdCount <Int64>   # 判定为健康状态的阈值
 
 ```
 
 
 ***
-## 第32节(Contour)
-### Contour(38m)
-
-
-***
 ## 第33节(kustomize)
+
+### 背景(20m)
+
+组织一个生态圈内多个组件为一体，统一进行管理
+
+1. deb, rpm -> apt, yum -> 包仓库
+1. kubectl, kustomize声明式应用管理(v1.14)
+1. helm, chart -> Chart hub
+
+### 定义
+
+kustomize 的核心目标在于为管理的应用生成资源配置，而这些资源配置中定义了资源的期望状态。在具体实现上，它通过 kustomize.yaml 文件组合和(或)叠加多种不同来源的资源配置来生成。
+
+kustomize 将一个特定应用的配置保存于专用的目录中，且该目录中心必须有一个名为 kustomize.yaml 的文件昨晚该应用的核心控制文件。由以下 kustomize.yaml 文件的格式可以大致看出，kustomize 可以直接组合由 resources 字段中指定资源文件作为最终配置，也可在他们的基础上进行额外的修订，例如添加通用标签和通用注解，为各个资源添加统一的名称前缀或名称后缀，改动pod模版中的镜像文件及向容器传递变量等
+
+### kustomize.yaml 文件格式
+```
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources: <[]str> # 待定制的原始资源配置文件列表，将有kustomize按顺序处理
+namespace: <str>
+commonLabels: <map[str]str> # 添加到所有资源的通用标签，包括pod模版及相关的标签选择器
+commonAnnotations: <map[str]str> # 添加到所有资源的通用注解
+namePrefix: <str> # 统一给所有资源添加的名称前缀
+nameSuffix: <str> # 统一给所有资源添加的名称后缀
+images: <[]image> # 将所有pod模版中的符合name字段条件镜像文件修改为指定的镜像
+- name: <str> # 资源清单中原有的镜像名称，即待替换的镜像
+  nameName: <str> # 要使用的新镜像名称
+  newTag: <str> # 要使用的新镜像的标签
+  digest: <str> # 要使用的新镜像的sha256校验码
+vars: <[]var> # 指定可用于替换pod容器中变量的值或容器环境变量的值
+- name: <str> # 变量的名称，支持以"${name}"格式进行引用
+  objref: <str> # 包含了要引用的目标字段的对象的名称
+  fieldref: <str> # 引用的字段名称，默认为 metadata.name
+bases: <[]str> # 基础配置目录
+
+配置生成器
+
+configMapGenerator: <[]ConfigMapGeneratorArgs> # ConfigMap资源生成器列表
+- name: <str> # configMap资源的名称，会受到namePrefix和nameSuffix影响
+  namespace: <str> 
+  behavior: <str> # 与上级同名资源的合并策略，可取值 create/replace/merge
+  files: <[]str> # 从指定的路径加载文件，生成configMap，要使用当前项目的相对路径
+  literals: <[]str> # 从指定的"key=value"格式的直接值，生成configMap
+  env: <str> # 从指定的环境变量文件中加载"key=value"格式环境变量为资源数据
+secretGenerator: <[]secretGeneratorArgs> # Secret资源生成器列表
+- name: <str> # Secret资源的名称，会受到namePrefix和nameSuffix影响
+  namespace: <str> 
+  behavior: <str> # 与上级同名资源的合并策略，可取值 create/replace/merge
+  files: <[]str> # 从指定的路径加载文件，生成configMap，要使用当前项目的相对路径
+  literals: <[]str> # 从指定的"key=value"格式的直接值，生成configMap
+  env: <str> # 从指定的环境变量文件中加载"key=value"格式环境变量为资源数据
+generatorOptions: <generatorOptions> # 当前 kustomization.yaml 中的configMap和secret生成器专用的选项
+  labesl: <map[str]str> # 当前 kustomization.yaml中所有生成资源添加的标签
+  annotations: <map[str]str> # 为生成所有资源添加的注解
+  disableNameSuffixHash: <bool> # 是否禁用hash名称后缀，默认启用
+```
+
 
 
 ***
 ## 第34节(helm)
 
+
+
+***
+## 第36节(promethus)
+
+### promethus(11m)
+
+
+
+***
+## 第37节(indice)
+
+### k8s的指标
+
+核心指标: metrics-server, metrics(api)
+
+自定义指标: 监控指标 prometheus
+
+
+
+***
+## 第38节(log)
+plg: promtail, Loki, Grafana
+efk: ElasticSearch, fluent-bit, Kibana
+
+
+***
+## 第39节(log)

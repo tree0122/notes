@@ -60,5 +60,22 @@
             cp harbor.tr.cert harbor.tr.key ca.crt /etc/docker/certs.d/harbor.tr
         d. 重启Docker引擎
             systemctl restart docker
+    6. 开启启动harbor: /usr/lib/systemd/system/harbor.service
+
+    [Unit]
+    Description=Harbor
+    After=docker.service systemd-networkd.service systemd-resolved.service
+    Requires=docker.service
+    Documentation=http://github.com/vmware/harbor
+
+    [Service]
+    Type=simple
+    Restart=on-failure
+    RestartSec=5
+    ExecStart=/usr/local/bin/docker-compose -f {{ harbor_install_path }}/harbor/docker-compose.yml up
+    ExecStop=/usr/local/bin/docker-compose -f {{ harbor_install_path }}/harbor/docker-compose.yml down
+
+    [Install]
+    WantedBy=multi-user.target
     ```
     

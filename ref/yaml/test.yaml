@@ -1,0 +1,32 @@
+apiVersion: projectcontour.io/v1
+kind: HTTPProxy
+metadata:
+  name: httpproxy-headers-routing
+  namespace: test
+spec:
+  virtualhost:
+    fqdn: node01.tr
+  routes:
+  - conditions:
+    - header:
+        name: X-Canary
+        present: true
+    - header:
+        name: User-Agent
+        contains: curl
+    services:
+    - name: demoappv12
+      port: 80
+    services:
+    - name: demoappv11
+      port: 80
+
+
+      sudo gitlab-runner register -n \
+  --url http://gitlab.tr/ \
+  --registration-token GiGfv24mXp3MZeNBZYGX \
+  --executor docker \
+  --description "My Docker Runner" \
+  --docker-image "docker:19.03.12" \
+  --docker-privileged \
+  --docker-volumes "/certs/client"
