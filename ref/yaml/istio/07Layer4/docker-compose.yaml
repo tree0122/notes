@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  envoy:
+    image: smafire/envoy-alpine:v1.19.0
+    volumes:
+    - ./envoy.yaml:/etc/envoy/envoy.yaml
+    network_mode: "service:mainserver"
+    depends_on:
+    - mainserver
+
+  mainserver:
+    image: smafire/mini-http-server:v0.3
+    networks:
+      envoymesh:
+        aliases:
+        - webserver
+        - httpserver
+
+networks:
+  envoymesh: {}

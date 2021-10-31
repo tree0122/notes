@@ -803,19 +803,94 @@ docker的文件系统，与docker容器有同样的生命周期
 1. Pod上定义存储卷，并关联至目标存储服务上
 1. 在需要存储卷的容器上，挂着其pod的存储卷
 
+```
+spec:
+  volumes:
+  - name: <str> # 存储卷名称标识，仅可使用DNS标签格式的字符，在当前pod中必须唯一
+    VOL_TYPE: <obj> # 存储卷插件及具体的目标存储供给方的相关配置
+  containers:
+  - name:
+    image:
+    volumeMounts:
+    - name: <str> # 要挂载的存储卷的名称，必须匹配存储卷列表中某项的定义
+      mountPath: <str> # 容器文件系统上的挂载点路径
+      readOnly: <bool> # 是否挂载为只读，默认“否”
+      subPath: <str> # 挂载存储卷上的一个子目录值指定的挂载点
+      subPathExpr: <str> # 挂载由指定的模式匹配到的存储卷的文件或目录至挂载点
+```
 
-### pv/pvc(86min)
-storageClass
+### 存储卷插件(volume plugin)
+
+In-Tree: kubelet原生支持的(内建的存储插件)
+Out-Tree: CSI、FlexVolume
+
+1. Host级别: hostPath, Local
+1. 网络级别: nfs, GlusterFS, rbd(块设备), CephFS(文件系统)...
+1. 临时存储: emptyDir
+1. CSI(container storage interface), 如 Longhorn
+
+### pv/pvc(32m)
+![14pv](../ref/img/14pv.jpg)
+
+### emptydir(临时的)
+![14volumes-emptydir-demo](../ref/img/14volumes-emptydir-demo.jpg)
+
+### hostpath(节点级)
+![14hostpath](../ref/img/14hostpath.jpg)
+
+hostpath的文件类型
+![14hostpathtype](../ref/img/14hostpathtype.jpg)
+
+### nfs(网络级)(63m)
+![14nfs](../ref/img/14nfs.jpg)
+
+### pv的创建方式
+1. 管理员事先创建
+1. 借助storageclass动态创建
+
+### pv/pvc 职能(需求和实现)分离
+![14pvpvc](../ref/img/14pvpvc.jpg)
+
+### pv/pvc/storageclass的使用过程
+![14pvpvcstorageflow](../ref/img/14pvpvcstorageflow.jpg)
+
+### pv/pvc
+把存储的创建和消费分开
+
+storageClass: pv的创建模版，按用户的需求创建pv
 1. pvc: persistent volume claim, 持久卷申请; k8s上标准的资源类型之一；由apiserver用户使用
 1. pv: persistent volume, 持久卷，可被pvc绑定；而pv一定要关联与某个真正的存储空间(一般是网路存储服务上的存储空间)，由集群管理员管理
 1. pvc创建后，需找到最为匹配的pv，并与之绑定
+  在哪里找：
+  二者要么都不属于任何storageclass资源，要么属于同一个storageclass资源
+
+  怎么找：
+  
 
 Pod使用这类存储的步骤：
-1. admin: 创建pv
+1. admin: 创建好pv
 1. user: 按需创建pvc，而后创建Pod，在pod调用pvc类型的存储插件，调用同一个名称空间的pvc资源
+
+### pv/pvc的yaml
+![14pvpvcyaml](../ref/img/14pvpvcyaml.jpg)
+
+![14pvnfsyaml](../ref/img/14 pvnfsyaml.jpg)
+
+![14volumes-pvc-demo](../ref/img/14volumes-pvc-demo.jpg)
+
+![14pvc-demo](../ref/img/14pvc-demo.jpg)
 
 
 ## 第15节(29min)
+
+### k8s和docker的关系
+![14k8scni](../ref/img/14k8scni.jpg)
+
+![14containerd](../ref/img/14containerd.jpg)
+
+### 概念
+1. 存储卷：隶属于Pod，而非容器；pause容器支持
+    kubelet为了支持存储卷，内建来很多存储服务的客户端：emptydir、hostPath、NFS
 
 ### StorageClass: 模版 (43min)
 1. pv和pvc都可能属于某个特定的sc
@@ -823,6 +898,32 @@ Pod使用这类存储的步骤：
 1. 创建pv的模版: 将某个存储服务与sc关联起来
 
 ### kube-controller-manager 兼容ceph (56min)
+
+### storageclass-demo.yaml
+![15storageclassdemo](../ref/img/15storageclassdemo.jpg)
+
+### storageclass的参数
+![15storageclassdefine](../ref/img/15storageclassdefine.jpg)
+
+### Longhorn(Rancher)
+![15csiwork](../ref/img/15csiwork.jpg)
+
+![15pvc-longhorn-demo](../ref/img/15pvc-longhorn-demo.jpg)
+
+#### 部署时注意事项
+1. kubeadm token create --print-join-command
+1. 每个节点上部署iscsi的适配器，centos7上的程序为iscsi-initiator-utils
+
+15volumes-pvc-longhorn-demo
+
+![15volumes-pvc-longhorn-demo](../ref/img/15volumes-pvc-longhorn-demo.jpg)
+
+### 存储卷总结
+1. emptydir
+1. hostPath
+1. NFS
+1. Longhorn(借助CSI)
+
 
 ***
 ## 第16节(configMap)
@@ -832,11 +933,13 @@ kubelet In-Tree
 
 如何为容器化应用提供配置信息：
 1. 启动容器时，直接向应用程序传递参数，args: []
-1. 将定义好的配置文件培进镜像中
-1. 通过环境变量向容器传递配置数据：
+1. 将定义好的配置文件焙进镜像中
+1. 通过环境变量向容器传递配置数据：前提是，应用支持从环境变量加载配置信息，制作镜像时，用entrypoint处理预变量，将环境变量替换到应用的配置文件中
 1. 基于存储卷向容器传递配置文件：运行中的改变，需要应用程序重载
 
-ConfigMap，以k/v格式保存配置项的名称和配置数据
+ConfigMap，以k/v格式保存配置项的名称和配置数据，
+1. 由Pod中的容器以环境变量的方式从configMap中加载特定的值
+1. 可让Pod直接将configMap以存储卷的形式附加，而由容器挂载到指定目录下，从而获取到完整的配置文件
 
 ### 创建方式
 1. 命令式命令: kubectl create configmap demoapp-config --from-literal=host=0.0.0.0 --from-literal=port=8080
@@ -845,8 +948,19 @@ ConfigMap，以k/v格式保存配置项的名称和配置数据
 1. 资源清单: 
 
 ### 使用configmap 
+
+![16configmapuse](../ref/img/16configmapuse.jpg)
+
+![16cm-env-demo](../ref/img/16cm-env-demo.jpg)
+
+![16cm-volume-demo](../ref/img/16cm-volume-demo.jpg)
+
+![16cm-volume-demo2](../ref/img/16cm-volume-demo2.jpg)
+
+![16cm-volume-demo3](../ref/img/16cm-volume-demo3.jpg)
+
 1. 基于键值的方式引用
-  ```
+  `` `
   spec:
   containers:
   - image: ikubernetes/demoapp:v1.0
@@ -884,10 +998,11 @@ ConfigMap，以k/v格式保存配置项的名称和配置数据
     nginx -s reload
     nginx -T
 
-  ***
 
 
-## 第17节(secretDownAPI)
+***
+
+## 第17节(secretDownwardAPI)
 kubectl create secret --help
 ### secret类型
 1. docker-registry: 创建一个给 Docker registry 使用的 secret
@@ -897,22 +1012,38 @@ kubectl create secret --help
   - --type="kubernetes.io/rbd"
   - --type="kubernetes.io/ssh-auth"
   - kubeadm的bootstrap所使用的token
+1. eg: kubectl create secret generic web-basic --from-literal=username=root  --from-literal=password=root --type="kubernetes.io/basic-auth"
 
-  另外，保存专用于ServiceAccount相关的token信息的secret资源，会使用资源注解来保存其使用场景
+1. 另外，保存专用于ServiceAccount相关的token信息的secret资源，会使用资源注解来保存其使用场景，其注解：
+  annotations:
+    kubernetes.io/service-account.name: node-controller
+    kubernetes.io/service-account.uid: $uuid
+1. 还有一种有kubeadm的bootstrap所使用的token专用类型，他通常保存于kube-system名称空间，以bootstap-token为前缀
+  --type="bootstrap.kubernetes.io/token"
+
 ### annotations
-1. annotation的名称遵循类似于labels的名称格式，但其数据长度不受限制
-1. 不能用于被标签选择器作为筛选条件；但
-1. 专用的管理命令: kubectl annotate type/name key=val
+1. annotation的名称遵循类似于labels的名称格式，但其数据长度不受限制，但lables的数据长度只有63个字符
+1. 不能用于被标签选择器作为筛选条件；但常用于为处于beta阶段的app提供临时的配置接口
+1. 专用的管理命令: kubectl annotate $type/$ name key=val; 删除注解 kubectl annotate $type/$ name key-
 
-### tls
-在创建secret的命令中，除了类型标识不同外，他还需要使用专用的选项，--cert=  和 --key=
+### tls(31m)
+是一种独特的类型，在创建secret的命令中，除了类型标识不同外，他还需要使用专用的选项，--cert=$证书文件路径  和 --key=$私钥文件路径
 
-无论证书和私钥文件名是什么，他们统一为tls.key和 tls.crt
+无论证书和私钥文件名是什么，他们统一存储为tls.key和 tls.crt
 
-### docker-registry
+1. 生成密钥: (umask 077; openssl genrsa -out nginx.key 2048)
+1. 生成证书: openssl req -new -x509 -key nginx.key -out nginx.crt -subj /C=CN/ST=BJ/L=BJ/O=ORG/CN=tree.com
+1. kubectl create secret tls nginx-ssl --key=./nginx.key --cert=./nginx.crt
+1. kubectl describe secret nginx-ssl
+    kubectl get secret nginx-ssl -o yaml
+    echo $tls.key | base64 -d
+
+### docker-registry(39m)
 ```
-ubectl create secret docker-registry my-secret --docker-server=DOCKER_REGISTRY_SERVER --docker-username=DOCKER_USER --docker-password=DOCKER_PASSWORD --docker-email=DOCKER_EMAIL
+kubectl create secret docker-registry my-secret --docker-server=DOCKER_REGISTRY_SERVER --docker-username=DOCKER_USER --docker-password=DOCKER_PASSWORD --docker-email=DOCKER_EMAIL
 ```
+1. 命令行生成
+1. 也可以从docker的认证文件中加载信息，这时用 --from-file 选项：$HOME/.dockercfg, ~/.docker/config.json
 1. 如何使用: pod.spec.imagePullSecrets
 
 ### secret的使用
@@ -930,12 +1061,27 @@ ubectl create secret docker-registry my-secret --docker-server=DOCKER_REGISTRY_S
 
   ```
 
+![16secretenvuse](../ref/img/16secretenvuse.jpg)
+
+![16secretenvdemo](../ref/img/16secretenvdemo.jpg)
+
+![16secretvolumedemo](../ref/img/16secretvolumedemo.jpg)
+
+
 ### downwardAPI存储卷类型，
+
+![16downwardAPI](../ref/img/16downwardAPI.jpg)
+
 容器运行时，获取容器定义时的信息。严格意义上不是存储卷，原因在于，它引用的是Pod自身的运行环境信息，这些信息在Pod启动时就存在
-1. fieldRef: metadata.name
-1. status.
-1. spec.
+1. fieldRef: 
+    fieldPath: $pod定义时的不变属性(如: metadata.name)
 1. resourceFieldRef: 
+    resource: $pod运行时计算的属性(如: limits.cpu)
+    divisor: 1Mi
+
+![16dw-env-demo](../ref/img/16dw-env-demo.jpg)
+
+![16dwvmdemo](../ref/img/16dwvmdemo.jpg)
 
 
 ***
@@ -1083,7 +1229,17 @@ spec:
 
 ***
 ## 第22节(auth)
-> 认证，授权，准入控制
+系统访问控制:
+插件化实现三个功能
+1. 认证(Authn)，
+1. 授权(Authz)，
+1. 准入控制(Admission)
+
+认证：
+  用户：
+    user account: 人类用户，k8s不负责这类数据，需借助外部组件实现
+    service account: 由k8s上运行的pod访问apiServer时使用，隶属于某个名称空间
+  用户组
 
 ### Authn, 认证 通行证
 
@@ -1092,9 +1248,9 @@ spec:
   - Service Account
 
 - **用户组**
-  - system:unauthenticated
-  - system:authenticated
-  - system:serviceaccounts 所有名称空间
+  - system:unauthenticated, 未通过认证用户
+  - system:authenticated, 通过认证的用户
+  - system:serviceaccounts, 所有名称空间的ServiceAccount对象
   - system:serviceaccounts:<namespace>
 
 - **认证方式**
@@ -1104,15 +1260,15 @@ spec:
     CommonName, CN: 用户名
     Orgnization, O: 组名
 
-  1. 引导令牌(Token)
+  1. 引导令牌(Token): 在节点加入集群时临时认证
 
-  1. 静态令牌: 存储于apiServer进程可直接加载的文件中的令牌
+  1. 静态令牌: 存储于apiServer进程可直接加载的文件中的令牌，该文件内容会由apiServer缓存于内存中
 
-  1. 静态密码: 存储于apiServer进程可直接加载的文件中的账号密码
+  1. 静态密码: 存储于apiServer进程可直接加载的文件中的账号密码，该文件内容会由apiServer缓存于内存中
 
-  1. ServiceAccount令牌
+  1. ServiceAccount令牌: 用于认证ServiceAccount
 
-  1. OpenID Connect令牌: OAuth2
+  1. OpenID Connect令牌(OIDC): OAuth2
 
   1. Webhook令牌
 
@@ -1121,37 +1277,120 @@ spec:
 ### Authz, 授权 权限管理和分配
 
 **授权方式**:
-  1. Node
-  1. ABAC: Attribution, 基于属性
+  1. Node: 专用于控制kubelet
+  1. ABAC: Attribution, 基于属性的访问控制
   1. RBAC: RoleBased AC, 基于角色的访问
-  1. Webhook
+  1. Webhook: http的回调
+
+
+![22authnauthz](../ref/img/22authnauthz.jpg)
 
 ### Admission, 准入控制。
 
 检测资源是否合规，准入控制操作，只作用于用户的“写请求”
 
 **准入控制器**
-  1. LimitRanger: 单个pod的限制
+  1. LimitRanger: 每个pod的个体限制
   1. ResourceQuota: 整体的限制
-  1. PSP: PodSecurityPolicy 限制用户能使用那些特权
+  1. PSP: PodSecurityPolicy 在集群级别限制用户能使用那些特权
 
 
 ### 认证的实现(46m)
 
-**ServiceAccount令牌认证**, K8S自动为每个Pod注入一个ServiceAccount, 令牌在每个名称空间中，会自动存在一个ServiceAccount，将被该空间下
+**ServiceAccount令牌认证**, K8S自动为每个Pod注入一个ServiceAccount, 令牌在每个名称空间中，会自动(由ServiceAccount准入控制器负责)存在一个ServiceAccount，将被该空间下每个pod共享使用
 
-**kubeconfig配置文件**
+![22saspec](../ref/img/22saspec.jpg)
+
+![22scdemo](../ref/img/22scdemo.jpg)
+
+![22sectoken](../ref/img/22sectoken.jpg)
+
+**kubeconfig配置文件**(65m)
+
+![22kubeconfigusercluster](../ref/img/22kubeconfigusercluster.jpg)
+
+1. /etc/kubernetes: kubectl options/ kubectl config
+1. 可管理多集群的多个用户
 
 
 ***
 ## 第23节(authz)
+### 单向https认证(24m) 
+1. 验证cn名称
+1. 验证ca来源合法
+1. 验证ca有效期
 
+### 自签证书(40m)
+
+### 授权(65m)
+DAC, MAC, RBAC, ABAC
+
+RBAC: Role-Based
+1. 四个资源类型：
+  Role: 名称空间内的角色
+  ClusterRole: 集群级别的角色
+  RoleBinding: 角色绑定；用户仅得到特定名称空间下的Role权限
+  ClusterRoleBinding: 集群角色绑定
+
+  user -> RoleBinding -> ClusterRole，权限降级: 用户得到的权限仅是ClusterRole的权限在Rolebingding所属的名称空间上的一个子集
+
+  kubectl get role kube-proxy -n kube-system -o yaml
+
+1. 能接受verb的目录有三类:
+  - resources: 资源类型，该类型下的所有对象都是目标，pods
+  - resourceNames: 特定的对象个体，pods/mypod
+  - nonresourcesurl: 非资源型的URL，/status
+1. Verbs:
+  create, get, list, update, delete, patch
+
+![23rbac](../ref/img/23rbac.jpg)
 
 
 ***
 ## 第24节(auths)
 
+### role
+![24podreaderrbac](../ref/img/24podreaderrbac.jpg)
 
+### rolebinding
+![24masonadminrolebinding](../ref/img/24masonadminrolebinding.jpg)
+
+
+### kubernetes-dashboard, vmware
+1. kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.2.0/aio/deploy/recommended.yaml
+
+
+### serviceAccout to config
+1. kubectl config set-credentials k8s-admin --token=$token --kubeconfig=/tmp/k8s-admin.conf
+1. kubectl config view --kubeconfig=/tmp/k8s-admin.conf
+1. bash gen-kubeconfig-based-sa.sh $sa $namespace $clusterContext
+
+
+### 准入控制(65m): 校验和变异(即附加默认值)
+1. limitranger: 为Pod添加默认的计算、存储资源需求和资源限制；支持分别在容器和Pod级别进行限制
+1. resourcequota: 限制资源数量，限制计算、存储资源总量
+1. podsecuritypolicy: 在集群级别，限制用户在Pod上可配置使用的securityContext
+
+### limitranger
+![24limitRangeDemo](../ref/img/24limitRangeDemo.jpg)
+
+![24LimitArch](../ref/img/24LimitArch.jpg)
+
+### resourcequota(90m)
+![24ResourceQuotaDoc](../ref/img/24ResourceQuotaDoc.jpg)
+
+![24ResourceQuotaDemo](../ref/img/24ResourceQuotaDemo.jpg)
+
+### psp: podsecuritypolicy
+![24PodSecurityPolicyDoc](../ref/img/24PodSecurityPolicyDoc.jpg)
+
+![24pspPrivilegedDemo](../ref/img/24pspPrivilegedDemo.jpg)
+
+![24pspRestrictedDemo](../ref/img/24pspRestrictedDemo.jpg)
+
+注意：psp必须先创建，再启动配置psp的apiServer  
+
+![24pspRoleBind](../ref/img/24pspRoleBind.jpg)
 
 ***
 ## 第25节(flannel)
@@ -1184,7 +1423,32 @@ spec:
 ### 污点容忍度(46m)
 
 ***
-## 第31节(Ingress)
+## 第31节(CRD)
+
+![31CustomResourceDefinition](../ref/img/31CustomResourceDefinition.jpg)
+
+![31crdDoc](../ref/img/31crdDoc.jpg)
+
+![31crdObj](../ref/img/31crdObj.jpg)
+
+![31crdV1User](../ref/img/31crdV1User.jpg)
+
+![31usrCrdDemo](../ref/img/31usrCrdDemo.jpg)
+
+![31crdControllerIntro](../ref/img/31crdControllerIntro.jpg)
+
+![31kubeAggArch](../ref/img/31kubeAggArch.jpg)
+
+![31operator](../ref/img/31operator.jpg)
+
+![31LayerEtcd](../ref/img/31LayerEtcd.jpg)
+
+![31externalEtcd](../ref/img/31externalEtcd.jpg)
+
+更复杂的CRD控制器，称为Operator
+
+***
+## 第32节(Ingress)
 ### 外部流量进入集群内部的实现
 1. Service:
   NodePort
@@ -1206,7 +1470,7 @@ Ingress Controller: Ingress控制器
 
 ### Ingress规范(34m)
 ```
-# v1beta1 Ingress 资源规范
+ v1beta1 Ingress 资源规范
 
 apiVersion: extensions/v1beta1 # 资源所属的api群组和版本
 kind: Ingress # 资源类型标识符
@@ -1233,7 +1497,7 @@ spec:
   ingressClassName <str> # ingress类名称，用于指定适配的控制器
 
 
-# v1 Ingress资源规范
+ v1 Ingress资源规范
 
 apiVersion: networking.k8s.io/v1 # 资源所属的api群组和版本
 kind: Ingress # 资源类型标识符
@@ -1268,7 +1532,7 @@ spec:
 
 
 ***
-## 第32节(Contour)
+## 第33节(Contour)
 ### ingress-nginx的tls
 ```
 生成私钥: (umask 077; openssl genrsa -out tls.key 2048)
@@ -1340,7 +1604,7 @@ spec:
       responseHeadersPolicy <HeadersPolicy>   # 到下游客户端响应报文的标头策略
     loadBalancerPolicy <LoadBalancerPolicy>   # 指定要使用负载均衡策略
       strategy <String>    # 具体使用的策略，支持Random、RoundRobin、Cookie
-# 和WeightedLeastRequest，默认为RoundRobin；
+ 和WeightedLeastRequest，默认为RoundRobin；
     requestHeadersPolicy <HeadersPolicy>   # 路由级别的请求报文标头策略
     reHeadersPolicy <HeadersPolicy>         # 路由级别的响应报文标头策略
     pathRewritePolicy <PathRewritePolicy>  # URL重写
@@ -1372,7 +1636,7 @@ spec:
 
 
 ***
-## 第33节(kustomize)
+## 第34节(kustomize)
 
 ### 背景(20m)
 
@@ -1434,9 +1698,9 @@ generatorOptions: <generatorOptions> # 当前 kustomization.yaml 中的configMap
 
 
 ***
-## 第34节(helm)
+## 第35节(helm)
 
-
+![35helmDoc](../ref/img/35helmDoc.jpg)
 
 ***
 ## 第36节(promethus)

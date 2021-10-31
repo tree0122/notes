@@ -142,3 +142,100 @@ Envoy是一个L7代理和连接总线，用于现代大型面向服务架构
 ---
 
 ## EnvoyLayer4
+
+### Cluster简易静态配置
+![07ClusterConf](../ref/img/istio/07ClusterConf.jpg)
+
+### Cluster简易静态配置示例
+![07ClusterConfEg](../ref/img/istio/07ClusterConfEg.jpg)
+
+### L4过滤器tcp_proxy
+![07L4_tcp_proxy](../ref/img/istio/07L4_tcp_proxy.jpg)
+
+### TCP代理配置示例
+![07tcp_proxy_eg](../ref/img/istio/07tcp_proxy_eg.jpg)
+
+### 运行的示例
+1. envoy.yaml
+    ![07eg_envoy_yaml](../ref/img/istio/07eg_envoy_yaml.jpg)
+
+1. docker-compose.yaml(模拟sidecar)
+    ![07eg_docker-compose_yaml](../ref/img/istio/07eg_docker-compose_yaml.jpg)
+
+
+## 34istio
+ 
+ ### 介绍
+![34intro](../ref/img/istio/34intro.jpg)
+
+ ### 为什么
+![34why](../ref/img/istio/34why.jpg)
+
+ ### 功能
+![34func](../ref/img/istio/34func.jpg)
+
+ ### 是什么
+![34what](../ref/img/istio/34what.jpg)
+
+ ### 为什么要用istio
+![34whyIstio](../ref/img/istio/34whyIstio.jpg)
+
+ ### istio系统架构
+![34arch](../ref/img/istio/34arch.jpg)
+
+![34archGov](../ref/img/istio/34archGov.jpg)
+
+### Pilot
+![34pilot](../ref/img/istio/34pilot.jpg)
+
+![34pilotArch](../ref/img/istio/34pilotArch.jpg)
+
+### Mixer
+![34mixer](../ref/img/istio/34mixer.jpg)
+
+![34mixerMap](../ref/img/istio/34mixerMap.jpg)
+
+### istio的安全模型
+![34sec](../ref/img/istio/34sec.jpg)
+
+### Citadel
+![34citadel](../ref/img/istio/34citadel.jpg)
+
+### Galley
+![34galley](../ref/img/istio/34galley.jpg)
+
+### Ingress Gateway 和 Egress Gateway
+![34ingressEgress](../ref/img/istio/34ingressEgress.jpg)
+
+### Sidecar Injector
+![34injector](../ref/img/istio/34injector.jpg)
+
+### 可视化
+![34visual](../ref/img/istio/34visual.jpg)
+
+
+## 35 istio install
+
+### 本节话题
+![35sub](../ref/img/istio/35sub.jpg)
+
+### 示例集群
+![35com](../ref/img/istio/35com.jpg)
+
+### 快速安装
+![35install](../ref/img/istio/35install.jpg)
+
+// istioctl manifest generate --set profile=demo >/tmp/demo.yaml
+
+// istioctl verify-install [-f /tmp/demo.yaml]
+
+
+
+## 36istioDemo
+
+
+
+
+
+
+
