@@ -7,8 +7,8 @@
     "doc": "docs"
   },
   "scripts": {
-    "dev": "vuepress dev docs",
-    "build": "vuepress build docs"
+    "dev": "set NODE_OPTIONS=--openssl-legacy-provider && vuepress dev docs",
+    "build": "set NODE_OPTIONS=--openssl-legacy-provider && vuepress build docs"
   },
   "repository": {
     "type": "git",
