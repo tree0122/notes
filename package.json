@@ -1,0 +1,28 @@
+{
+  "name": "notes",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "dev": "vuepress dev docs",
+    "build": "vuepress build docs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tree0122/notes.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tree0122/notes/issues"
+  },
+  "homepage": "https://github.com/tree0122/notes#readme",
+  "devDependencies": {
+    "vuepress": "^1.9.10",
+    "vuepress-theme-reco": "^1.6.17"
+  }
+}
